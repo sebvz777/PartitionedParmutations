@@ -16,5 +16,8 @@
         @test join(SetPartition([1, 2, 3], [2, 1, 4, 4]), SetPartition([1, 1, 1], [2, 3, 1, 1])) == SetPartition([1, 1, 1], [1, 1, 1, 1])
         @test_throws ArgumentError join(SetPartition([1, 2], [2, 1, 4, 4]), SetPartition([1, 1, 1], [2, 3, 1, 1]))
         @test_throws ArgumentError join(SetPartition([1, 2], [2, 1, 4, 4]), SetPartition([1, 1], [2, 3, 1]))
+
+        @test length(PartitionedPermutation(Perm([2, 1, 3, 4]), [1, 1, 2, 2])) == 4
+        @test length2(PartitionedPermutation(Perm([2, 1, 3, 4]), [1, 1, 2, 2])) == 3
     end
 end

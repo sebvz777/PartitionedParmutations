@@ -16,7 +16,8 @@ import Oscar:
     @req,
     SetPartitions,
     Perm,
-    join
+    join,
+    compose
 
 
 export PartitionedPermutation
