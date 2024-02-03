@@ -123,7 +123,7 @@ struct PartitionedPermutation
     p::Perm{Int}
     V::SetPartition
 
-    function PartitionedPermutation(_p::Perm{Int}, _V::Vector{Int}) # ?
+    function PartitionedPermutation(_p::Perm{Int}, _V::Vector{Int})
         __V = SetPartition(_V, Int[])
         @req parent(_p).n == length(_V) "permutation and partition must have the same length"
         @req cycle_partition(_p) <= __V "permutation must be dominated by partition"

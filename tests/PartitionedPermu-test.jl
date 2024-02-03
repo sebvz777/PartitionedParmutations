@@ -20,4 +20,7 @@
         @test length(PartitionedPermutation(Perm([2, 1, 3, 4]), [1, 1, 2, 2])) == 4
         @test length2(PartitionedPermutation(Perm([2, 1, 3, 4]), [1, 1, 2, 2])) == 3
     end
+    @testset "EnumeratePartitionedPermutations.jl" begin
+        @test length(enumerate_partitioned_perm(7)) > 877  # TODO more test cases
+    end
 end
