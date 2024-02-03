@@ -70,11 +70,9 @@ julia> length(enumerate_partitioned_perm(6))
 """
 function enumerate_partitioned_perm(n::Int)
     partitioned_permutations = []
-    count = 0
     for i in enumerate_all_partitions(n)
         for ii in enumerate_permutations_recursive(1:n)
             ii_p = cycle_partition(Perm(ii))
-            count += 1
             if ii_p.upper_points <= i
                 push!(partitioned_permutations, PartitionedPermutation(Perm(ii), i))
             end
