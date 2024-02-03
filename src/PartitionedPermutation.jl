@@ -8,7 +8,7 @@ using Oscar
 ####################################################################
 # Functions for Set Partitions
 ####################################################################
-
+# TODO Types for Sets Dicts Arrays like explained below
 """
     <=(V::SetPartition, W::SetPartition)
 
