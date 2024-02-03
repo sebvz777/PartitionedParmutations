@@ -1,7 +1,9 @@
 import Base: # TODO remove
     deepcopy,
     <=,
-    length
+    length,
+    ==,
+    hash
 
 using Oscar
 
@@ -25,7 +27,7 @@ function <=(V::SetPartition, W::SetPartition)
     append!(W_vec, W.lower_points)
 
     # introduce a dictionary to store a mapping from the blocks of V to the blocks of W
-    block_map = Dict()
+    block_map = Dict{Int, Int}()
 
     for (index, block) in enumerate(V_vec)
         # if the block of the index in V has already been mapped to a block of W,
@@ -104,7 +106,25 @@ struct PartitionedPermutation
         new(_p, __V)
     end
 end
-# TODO functions like deepcopy, ==, hash etc.
+
+function ==(pp_1::PartitionedPermutation, pp_2::PartitionedPermutation)
+    return pp_1.p == pp_2.p && pp_1.V == pp_2.V
+end
+
+function hash(pp::PartitionedPermutation, h::UInt)
+    return hash(pp.p, hash(pp.V, h))
+end
+
+function deepcopy_internal(pp::PartitionedPermutation, stackdict::IdDict)
+    if haskey(stackdict, pp)
+        return stackdict[pp]
+    end
+    q = PartitionedPermutation(deepcopy_internal(pp.p, stackdict), 
+                     deepcopy_internal(pp.V, stackdict))
+    stackdict[pp] = q
+    return q
+end
+
 # all kinds of length
 function length(pp::PartitionedPermutation)
     return parent(pp.p).n
