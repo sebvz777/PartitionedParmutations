@@ -34,6 +34,7 @@ export enumerate_partitioned_perm
 
 include("SetPartitionFunctions.jl")
 include("PartitionedPermutation.jl")
+include("PartitionedPermutationProducts.jl")
 include("EnumeratePartitionedPermutations.jl")
 
 end
