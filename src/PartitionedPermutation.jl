@@ -1,17 +1,6 @@
-import Base: # TODO remove
-    deepcopy,
-    <=,
-    length,
-    ==,
-    hash,
-    *
-
-using Oscar
-
 ####################################################################
 # Functions for Set Partitions
 ####################################################################
-# TODO Types for Sets Dicts Arrays like explained below
 """
     <=(V::SetPartition, W::SetPartition)
 
@@ -123,13 +112,20 @@ PartitionedPermutation((1,2), SetPartition([1, 1, 2], Int64[]))
 struct PartitionedPermutation
     p::Perm{Int}
     V::SetPartition
+    check::Bool
 
-    function PartitionedPermutation(_p::Perm{Int}, _V::Vector{Int})
+    function PartitionedPermutation(_p::Perm{Int}, _V::Vector{Int}, _check::Bool=true)
         __V = SetPartition(_V, Int[])
-        @req parent(_p).n == length(_V) "permutation and partition must have the same length"
-        @req cycle_partition(_p) <= __V "permutation must be dominated by partition"
+        if _check
+            @req parent(_p).n == length(_V) "permutation and partition must have the same length"
+            @req cycle_partition(_p) <= __V "permutation must be dominated by partition"
+        end
         new(_p, __V)
     end
+end
+
+function partitioned_permutation(p::Perm{Int}, V::Vector{Int}, check::Bool=true)
+    return PartitionedPermutation(p, V, check)
 end
 
 function ==(pp_1::PartitionedPermutation, pp_2::PartitionedPermutation)

@@ -11,13 +11,15 @@ import Base:
     <=,
     length
 
-# TODO more functions we use
 import Oscar:
     @req,
     SetPartitions,
     Perm,
     join,
-    compose
+    compose,
+    SetPartition,
+    subsets,
+    cycles
 
 
 export PartitionedPermutation
@@ -28,10 +30,11 @@ export join
 export length
 export length2
 export enumerate_partitioned_perm
+export enumerate_partitioned_perm_old
 
 
-include("PartitionedPermutation.jl")
 include("Util.jl")
+include("PartitionedPermutation.jl")
 include("EnumeratePartitionedPermutations.jl")
 
 end
@@ -46,6 +49,7 @@ export join
 export length
 export length2
 export enumerate_partitioned_perm
+export enumerate_partitioned_perm_old
 
 using Oscar # TODO can be removed, just to execute code below, like for example:
 a = SetPartition([1, 2], [4, 5])
