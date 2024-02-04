@@ -32,6 +32,7 @@ export length2
 export enumerate_partitioned_perm
 
 
+include("SetPartitionFunctions.jl")
 include("PartitionedPermutation.jl")
 include("EnumeratePartitionedPermutations.jl")
 
