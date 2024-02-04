@@ -13,7 +13,6 @@ import Base:
 
 import Oscar:
     @req,
-    SetPartitions,
     Perm,
     join,
     compose,
@@ -33,7 +32,6 @@ export length2
 export enumerate_partitioned_perm
 
 
-include("Util.jl")
 include("PartitionedPermutation.jl")
 include("EnumeratePartitionedPermutations.jl")
 

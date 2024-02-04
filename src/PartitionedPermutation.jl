@@ -2,6 +2,29 @@
 # Functions for Set Partitions
 ####################################################################
 """
+    number_of_blocks(V::SetPartition)
+
+Return the number of blocks of a `SetPartition`.
+
+# Examples
+```jldoctest
+julia> number_of_blocks(SetPartition([1, 2, 3], [2, 1, 3, 3]))
+3
+```
+"""
+function number_of_blocks(V::SetPartition)
+    # obtain one vector describing the partition V
+    vec = vcat(V.upper_points, V.lower_points)
+
+    # return the maximum number in vec
+    if length(vec) != 0
+        return maximum(vec)
+    else
+        return 0
+    end
+end
+
+"""
     <=(V::SetPartition, W::SetPartition)
 
 Check if the set partition `V` is dominated by the set partition `W`. This is the case if every block of `V`
@@ -17,10 +40,8 @@ function <=(V::SetPartition, W::SetPartition)
     @req size(V) == size(W) "arguments must have the same size"
 
     # obtain vectors describing the partitions V and W
-    V_vec = deepcopy(V.upper_points)
-    append!(V_vec, V.lower_points)
-    W_vec = deepcopy(W.upper_points)
-    append!(W_vec, W.lower_points)
+    V_vec = vcat(V.upper_points, V.lower_points)
+    W_vec = vcat(W.upper_points, W.lower_points)
 
     # introduce a dictionary to store a mapping from the blocks of V to the blocks of W
     block_map = Dict{Int, Int}()
