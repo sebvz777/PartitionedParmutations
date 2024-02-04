@@ -19,7 +19,8 @@ import Oscar:
     compose,
     SetPartition,
     subsets,
-    cycles
+    cycles,
+    Generic
 
 
 export PartitionedPermutation
@@ -30,8 +31,6 @@ export join
 export length
 export length2
 export enumerate_partitioned_perm
-export enumerate_partitioned_perm_old
-export enumerate_partitioned_perm_new
 
 
 include("Util.jl")
@@ -50,8 +49,6 @@ export join
 export length
 export length2
 export enumerate_partitioned_perm
-export enumerate_partitioned_perm_old
-export enumerate_partitioned_perm_new
 
 using Oscar # TODO can be removed, just to execute code below, like for example:
 a = SetPartition([1, 2], [4, 5])

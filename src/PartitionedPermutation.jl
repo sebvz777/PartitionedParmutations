@@ -91,7 +91,6 @@ end
 # Partitioned Permutations
 ############################################################
 
-# Constructor for Partitioned Permutations
 """
     PartitionedPermutation
 
@@ -207,14 +206,12 @@ function *(pp_1::PartitionedPermutation, pp_2::PartitionedPermutation)
     W = join(V_1, V_2)
     W_vec = W.upper_points
     s = p_2 * p_1
-    product_pp = PartitionedPermutation(s, W_vec) 
+    product_pp = PartitionedPermutation(s, W_vec)
 
     # return the product of pp_1 and pp_2
     if length2(pp_1) + length2(pp_2) == length2(product_pp)
         return product_pp
     else
-        println("Hey")
         return PartitionedPermutation(Perm(1:length(pp_1)), cycle_partition(Perm(1:length(pp_1))).upper_points)
     end
 end
-
