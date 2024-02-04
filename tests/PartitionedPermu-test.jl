@@ -17,18 +17,24 @@ end
         @test_throws ArgumentError PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 2, 2])
         @test_throws ArgumentError PartitionedPermutation(Perm([2, 1, 3, 4]), [1, 2, 3, 3])
     end
-    @testset "Functions for PartitionedPermutations" begin
+    @testset "PartitionedPermutation length" begin
         @test length(PartitionedPermutation(Perm([2, 1, 3, 4]), [1, 1, 2, 2])) == 4
         @test length2(PartitionedPermutation(Perm([2, 1, 3, 4]), [1, 1, 2, 2])) == 3
-
-        @test PartitionedPermutation(Perm([2, 1, 3, 6, 4, 5]), [1, 1, 1, 1, 1, 1]) * PartitionedPermutation(Perm([6, 1, 2, 4, 5, 3]), [1, 1, 1, 1, 1, 1]) == 
-            PartitionedPermutation(Perm([1, 2, 3, 4, 5, 6]),[1, 2, 3, 4, 5, 6])
-        @test PartitionedPermutation(Perm([1, 2, 3]), [1, 2, 3]) * PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 3]) ==
-            PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 2])
     end
     @testset "EnumeratePartitionedPermutations.jl" begin
         @test length(enumerate_partitioned_perm(3)) == 13
         @test length(enumerate_partitioned_perm(5)) == 501
         @test length(enumerate_partitioned_perm(7)) == 37633
+    end
+    @testset "PartitionedPermutation Product" begin
+        @test PartitionedPermutation(Perm([2, 1, 3, 6, 4, 5]), [1, 1, 1, 1, 1, 1]) * PartitionedPermutation(Perm([6, 1, 2, 4, 5, 3]), [1, 1, 1, 1, 1, 1]) == 
+            PartitionedPermutation(Perm([1, 2, 3, 4, 5, 6]),[1, 2, 3, 4, 5, 6])
+        @test PartitionedPermutation(Perm([1, 2, 3]), [1, 2, 3]) * PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 3]) ==
+            PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 2])
+        @test length(factorization_partitioned_permutation(PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 2]))) == 2
+        @test length(factorization_partitioned_permutation(PartitionedPermutation(Perm([2, 1, 4, 3]), [1, 1, 2, 2]))) <
+              length(factorization_partitioned_permutation(PartitionedPermutation(Perm([1, 2, 3, 4]), [1, 2, 3, 4])))
+        @test length(factorization_partitioned_permutation(PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 2]))) <
+              length(factorization_partitioned_permutation(PartitionedPermutation(Perm([1, 2, 3]), [1, 2, 3])))
     end
 end

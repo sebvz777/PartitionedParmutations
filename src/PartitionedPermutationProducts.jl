@@ -36,4 +36,28 @@ function *(pp_1::PartitionedPermutation, pp_2::PartitionedPermutation)
     end
 end
 
-# TODO factorize
+"""
+    factorization_partitioned_permutation(pp::PartitionedPermutation)
+
+Return the factorization of `pp` in form of a set of 2-tuples.
+
+# Examples
+```jldoctest
+julia> length(factorization_partitioned_permutation(PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 2])))
+Set([(PartitionedPermutation((1,2), SetPartition([1, 1, 2], Int64[])), PartitionedPermutation((), SetPartition([1, 2, 3], Int64[]))), 
+(PartitionedPermutation((), SetPartition([1, 2, 3], Int64[])), PartitionedPermutation((1,2), SetPartition([1, 1, 2], Int64[])))])
+```
+"""
+function factorization_partitioned_permutation(pp::PartitionedPermutation) # TODO better name?
+    size = length(pp.V.upper_points)
+
+    product_pairs = Set{Tuple{PartitionedPermutation, PartitionedPermutation}}()
+    for pp_1 in enumerate_partitioned_perm(size)
+        for pp_2 in enumerate_partitioned_perm(size)
+            if pp_1 * pp_2 == pp
+                push!(product_pairs, (pp_1, pp_2))
+            end
+        end
+    end
+    return product_pairs
+end
