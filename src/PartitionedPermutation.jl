@@ -97,10 +97,12 @@ end
 The type of partitioned permutations. Fieldnames are
 - p::Perm{Int} - a permutation
 - V::SetPartition - a partition
+- check::Bool = true
 If the permutation has length `n`, then the partition must have `n` upper points and 0 lower points. 
 Further, if `W` is the partition given by the cycles of `p`, then `W` must be dominated by `V` in the 
 sense that every block of `W` is contained in one block of `V`. There is one inner constructer of PartitionedPermutation:
 - PartitionedPermutation(_p::Perm{Int}, _V::Vector{Int}) constructs the partitioned permutation where the partition is given by the vector _V.
+If the optional flag `check` is set to `false`, then the constructor skips the validation of the requirements mentioned above.
 
 # Examples
 ```jldoctest
