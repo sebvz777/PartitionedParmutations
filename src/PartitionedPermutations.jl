@@ -1,20 +1,150 @@
-using Oscar
+import Base:
+    deepcopy,
+    <=,
+    length
+import Oscar: @req
 
-#If you can run this you are fine!
-a = SetPartition([1, 3], [3, 1])
-b = SetPartition([1, 3], [3, 3])
+####################################################################
+# Functions for Set Partitions
+####################################################################
 
-println(tensor_product(a, b))
+"""
+    <=(V::SetPartition, W::SetPartition)
 
-# Constructor for Partitioned Permuations
+Check if the set partition `V` is dominated by the set partition `W`. This is the case if every block of `V`
+is contained in exactly one block of `W`.
+"""
+function <=(V::SetPartition, W::SetPartition)
+    @req size(V) == size(W) "arguments must have the same size"
 
-# Join
-# Given permutaion pi, construct O_pi
-# all kinds of lengths 
+    # obtain vectors describing the partitions V and W
+    V_vec = deepcopy(V.upper_points)
+    append!(V_vec, V.lower_points)
+    W_vec = deepcopy(W.upper_points)
+    append!(W_vec, W.lower_points)
+
+    # introduce a dictionary to store a mapping from the blocks of V to the blocks of W
+    block_map = Dict()
+
+    for (index, block) in enumerate(V_vec)
+        # if the block of the index in V has already been mapped to a block of W,
+        # check if the mapping is consistent, otherwise add the mapping
+        if (haskey(block_map, block) && W_vec[index] != block_map[block])
+            return false
+        else
+            block_map[block] = W_vec[index]
+        end
+    end
+    return true
+end
+
+"""
+    cycle_partition(p::Perm{Int})
+
+Return the set partition whose blocks are the cycles of the permutation `p`. This set partition has no lower points.
+"""
+function cycle_partition(p::Perm{Int})
+    cycle_list = collect(cycles(p))
+    n = parent(p).n
+    partition_vector = zeros(Int64, n)
+
+    for (index, cycle) in enumerate(cycle_list)
+        for element in cycle
+            partition_vector[element] = index
+        end
+    end
+
+    return SetPartition(partition_vector, Int64[])
+end
+
+"""
+    join(V::SetPartition, W::SetPartition)
+
+Return the join of `V` and `W`.
+"""
+function join(V::SetPartition, W::SetPartition)
+    @req length(V.upper_points) == length(W.upper_points) "V and W must have the same number of upper points"
+    @req length(V.lower_points) == length(W.lower_points) "V and W must have the same number of lower points"
+    
+    # number of upper points
+    number_of_upper_points = length(V.upper_points)
+
+    # obtain vectors describing the partitions V and W
+    V_vec = deepcopy(V.upper_points)
+    append!(V_vec, V.lower_points)
+    W_vec = deepcopy(W.upper_points)
+    append!(W_vec, W.lower_points)
+
+    # construct the join
+    join_vec = zeros(Int, size(V))
+    V_mapping = Dict()
+    W_mapping = Dict()
+    number_of_added_blocks = 0
+    for (index, V_block) in enumerate(V_vec)
+        W_block = W_vec[index]
+        if haskey(V_mapping, V_block)
+            join_vec[index] = V_mapping[V_block]
+            W_mapping[W_block] = V_mapping[V_block]
+        elseif haskey(W_mapping, W_block)
+            join_vec[index] = W_mapping[W_block]
+            V_mapping[V_block] = W_mapping[W_block]
+        else
+            new_block = number_of_added_blocks + 1
+            number_of_added_blocks += 1
+
+            join_vec[index] =  new_block
+            V_mapping[V_block] = new_block
+            W_mapping[W_block] = new_block
+        end
+    end
+
+    return SetPartition(join_vec[1:number_of_upper_points], join_vec[number_of_upper_points+1:end])
+end
+
+
+
+############################################################
+# Partitioned Permutations
+############################################################
+
+# Constructor for Partitioned Permutations
+"""
+    PartitionedPermutation
+
+The type of partitioned permutations. Fieldnames are
+- p::Perm{Int} - a permutation
+- V::SetPartition - a partition
+If the permutation has length `n`, then the partition must have `n` upper points and 0 lower points. 
+Further, if `W` is the partition given by the cycles of `p`, then `W` must be dominated by `V` in the 
+sense that every block of `W` is contained in one block of `V`. There is one inner constructer of PartitionedPermutation:
+- PartitionedPermutation(_p::Perm{Int}, _V::Vector{Int}) constructs the partitioned permutation where the partition is given by the vector _V.
+"""
+struct PartitionedPermutation
+    p::Perm{Int}
+    V::SetPartition
+
+    function PartitionedPermutation(_p::Perm{Int}, _V::Vector{Int}) 
+        __V = SetPartition(_V, Int[])
+        @req parent(_p).n == length(_V) "permutation and partition must have the same length"
+        @req cycle_partition(_p) <= __V "permutation must be dominated by partition"
+        new(_p, __V)
+    end
+end
+
+# all kinds of length
+function length(pp::PartitionedPermutation)
+    return parent(pp.p).n
+end
+
+function length2(pp::PartitionedPermutation)
+    p = pp.p
+    V = pp.V
+    return parent(p).n - (2*number_of_blocks(V) - length(cycles(p)))
+end
 
 
 # take into consideration:
-# always comment yout code, example from SetPartitions:
+# always comment your code, example from SetPartitions:
 """
     tensor_product(p::SetPartition, q::SetPartition)
 
