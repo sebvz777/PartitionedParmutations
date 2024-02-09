@@ -16,6 +16,12 @@ using Oscar
 
 Check if the set partition `V` is dominated by the set partition `W`. This is the case if every block of `V`
 is contained in exactly one block of `W`.
+
+# Examples
+```jldoctest
+julia> SetPartition([1, 1, 2], [1, 2, 3]) <= SetPartition([1, 1, 2], [1, 2, 1])
+true
+```
 """
 function <=(V::SetPartition, W::SetPartition)
     @req size(V) == size(W) "arguments must have the same size"
@@ -45,6 +51,12 @@ end
     cycle_partition(p::Perm{Int})
 
 Return the set partition whose blocks are the cycles of the permutation `p`. This set partition has no lower points.
+
+# Examples
+```jldoctest
+julia> cycle_partition(Perm([2, 1, 3]))
+SetPartition([1, 1, 2], Int64[])
+```
 """
 function cycle_partition(p::Perm{Int})
     cycle_list = collect(cycles(p))
@@ -64,6 +76,12 @@ end
     join(V::SetPartition, W::SetPartition)
 
 Return the join of `V` and `W`.
+
+# Examples
+```jldoctest
+julia> join(SetPartition([1, 2], [2, 3]), SetPartition([1, 2], [1, 3]))
+SetPartition([1, 1], [1, 2])
+```
 """
 function join(V::SetPartition, W::SetPartition)
     @req length(V.upper_points) == length(W.upper_points) "V and W must have the same number of upper points"
@@ -94,6 +112,12 @@ If the permutation has length `n`, then the partition must have `n` upper points
 Further, if `W` is the partition given by the cycles of `p`, then `W` must be dominated by `V` in the 
 sense that every block of `W` is contained in one block of `V`. There is one inner constructer of PartitionedPermutation:
 - PartitionedPermutation(_p::Perm{Int}, _V::Vector{Int}) constructs the partitioned permutation where the partition is given by the vector _V.
+
+# Examples
+```jldoctest
+julia> PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 2])
+PartitionedPermutation((1,2), SetPartition([1, 1, 2], Int64[]))
+```
 """
 struct PartitionedPermutation
     p::Perm{Int}
@@ -125,11 +149,32 @@ function deepcopy_internal(pp::PartitionedPermutation, stackdict::IdDict)
     return q
 end
 
-# all kinds of length
+"""
+    length(pp::PartitionedPermutation)
+
+Return the length of a partitioned permutation, i.e. the size of the underlying set.
+
+# Examples
+```jldoctest
+julia> length(PartitionedPermutation(Perm([2, 1]), [1, 1]))
+2
+```
+"""
 function length(pp::PartitionedPermutation)
     return parent(pp.p).n
 end
 
+"""
+    length2(pp::PartitionedPermutation)
+
+Return the adjusted length of a partitioned permutation as described in [CITE].
+
+# Examples
+```jldoctest
+julia> length2(PartitionedPermutation(Perm([2, 1]), [1, 1]))
+1
+```
+"""
 function length2(pp::PartitionedPermutation)
     p = pp.p
     V = pp.V
