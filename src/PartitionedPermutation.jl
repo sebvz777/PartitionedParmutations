@@ -217,7 +217,7 @@ function *(pp_1::PartitionedPermutation, pp_2::PartitionedPermutation)
     if length2(pp_1) + length2(pp_2) == length2(product_pp)
         return product_pp
     else
-        return nothing
+        return cycle_partition(Perm(1:length(pp_1)))
     end
 end
 
