@@ -3,7 +3,8 @@ import Base: # TODO remove
     <=,
     length,
     ==,
-    hash
+    hash,
+    *
 
 using Oscar
 
@@ -167,7 +168,8 @@ end
 """
     length2(pp::PartitionedPermutation)
 
-Return the adjusted length of a partitioned permutation as described in [CITE].
+Return the adjusted length of a partitioned permutation as described in [CITE] as `|(V, pi)|`
+for a partition `V` and a permutation `pi`.
 
 # Examples
 ```jldoctest
@@ -181,59 +183,41 @@ function length2(pp::PartitionedPermutation)
     return parent(p).n - (2*number_of_blocks(V) - length(cycles(p)))
 end
 
-# take into consideration:
-# always comment your code, example from SetPartitions:
 """
-    tensor_product(p::SetPartition, q::SetPartition)
+    *(pp_1::PartitionedPermutation, pp_2::PartitionedPermutation)
 
-Return the tensor product of `p` and `q`.
-
-The tensor product of two partitions is given by their horizontal concatenation.
-See also Section 4.1.1 in [Gro20](@cite).
+Return the product of two partitioned permutations as described in [CITE].
 
 # Examples
 ```jldoctest
-julia> tensor_product(set_partition([1, 2], [2, 1]), set_partition([1, 1], [1]))
-SetPartition([1, 2, 3, 3], [2, 1, 3])
+julia> x = PartitionedPermutation(Perm([1, 2, 3]), [1, 2, 3])
+PartitionedPermutation((), SetPartition([1, 2, 3], Int64[]))
+
+julia> y = PartitionedPermutation(Perm([2, 1, 3]), [1, 1, 3])
+PartitionedPermutation((1,2), SetPartition([1, 1, 2], Int64[]))
+
+julia> x*y
+PartitionedPermutation((1,2), SetPartition([1, 1, 2], Int64[]))
 ```
 """
-# for more complex functions with more arguments also comment on the different arguments like for example:
-"""
-    construct_category(p::Vector{AbstractPartition}, n::Int, tracing::Bool = false, 
-        max_artifical::Int = 0, spatial_rotation::Union{Functi on,Nothing}=nothing)
+function *(pp_1::PartitionedPermutation, pp_2::PartitionedPermutation)
+    # obtain the partitions and permutations from pp_1 and pp_2
+    V_1 = pp_1.V 
+    V_2 = pp_2.V
+    p_1 = pp_1.p
+    p_2 = pp_2.p 
 
-Return a list of all partitions of size `n` which can be constructed from category 
-operations using partitions in `p` and without using partitions of size greater than 
-`max(n, maxsize(p), max_artifical)`.
+    # compute the join of V_1 and V_2, the composition of p_1 and p_2
+    W = join(V_1, V_2)
+    W_vec = W.upper_points
+    s = p_2 * p_1
+    product_pp = PartitionedPermutation(s, W_vec) 
 
-Category operations include composition, tensor product, involution, 
-rotation and reflection. See Section 4.1.1 in [Gro20](@cite) 
-for more information on categories of partitions and these operations. 
+    # return the product of pp_1 and pp_2
+    if length2(pp_1) + length2(pp_2) == length2(product_pp)
+        return product_pp
+    else
+        return nothing
+    end
+end
 
-See also Section 4 in [Vol23](@cite) for a description of the underlying algorithm.
-
-# Arguments
-- `p`: list of partitions
-- `n`: size of partitions to construct
-- `tracing` (optional): return additional data to allow tracing using `print_trace` 
-- `max_artifical` (optional): allow partitions to grow larger then `n` and `maxsize(p)`
-- `spatial_rotation` (optional): function which performs a rotation on `SpatialPartition`
-
-# Returns
-- list of all partitions of size `n` constructed from partitions in `p`
-
-# Examples
-```jldoctest
-julia> length(construct_category([SetPartition([1, 2], [2, 1])], 6))
-105
-```
-"""
-# make code short an easy
-# -> use helper functions and implement them in Util.jl
-# helper functions always start with _ 
-# function names are small with _ like "tensor_product". Constructors start with a capital letter like "SetPartition"
-# instead of copy always use deep_copy
-# eventhough julia returns the last expression, the Oscar people want us to use return stmts
-# use for complex data structures like dicts, Sets, Arrays, Vectors etc. types, example from SetPartitions:
-"""all_partitions_by_size = Dict{Int, Set{Int}}()""" # instead of all_partitions_by_size = Dict()
-# I would recommend using VS Code for programming in julia 
