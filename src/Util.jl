@@ -1,4 +1,3 @@
-
 # number of blocks in a partition
 function number_of_blocks(V::SetPartition)
     # obtain one vector describing the partition V
