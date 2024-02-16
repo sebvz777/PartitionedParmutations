@@ -1,3 +1,5 @@
+using Oscar.Generic # TODO: Why is this necessary?
+
 """
     enumerate_all_partitions(n::Int, start::Int=0)
 
@@ -11,6 +13,11 @@ julia> length(enumerate_all_partitions(6))
 ```
 """
 function _enumerate_all_partitions(n::Int, start::Int=0)
+    # TODO: Fix the problem that the function does not work correctly for n = 1, below is only a quick fix
+    if n==1
+        return [[1]]
+    end
+
     partitions = start == 0 ? [[1]] : [[start]]
     first_element = start == 0 ? 1 : start
     
@@ -132,6 +139,35 @@ function enumerate_partitioned_perm(n::Int)
         # finally produce PartititonedPermutations without double checking properties
         for ii in Set{Vector{Int}}(partitions_dominating)
             push!(partitioned_permutations, PartitionedPermutation(Perm(i), ii, false))
+        end
+    end
+
+    return partitioned_permutations
+end
+
+
+function enumerate_partitioned_perm_new(n::Int)
+    
+    partitioned_permutations = []
+
+    # Iterate over all permutations
+    for p in Generic.elements!(Generic.SymmetricGroup(n))
+        cycle_part = cycle_partition(p)
+        number_of_cycles = number_of_blocks(cycle_part)
+        cycle_part_vec = cycle_part.upper_points
+
+
+        # Iterate over all partitions dominating p, 
+        # those are obtained by merging blocks of the cycle partition of p
+        for block_partition in _enumerate_all_partitions(number_of_cycles)
+            
+            # merge blocks of cycle_part according to block_partition
+            part_vec = map(cycle_part_vec) do index
+                block_partition[index]
+            end
+
+            # add the obtained partitioned permutation to the list
+            push!(partitioned_permutations, PartitionedPermutation(deepcopy(p), part_vec, false))
         end
     end
 
